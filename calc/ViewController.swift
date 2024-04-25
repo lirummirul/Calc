@@ -59,6 +59,21 @@ class ViewController: UIViewController {
         return buttons
     }()
 
+    private let buttonStacks: [UIStackView] = {
+        var stackViews: [UIStackView] = []
+
+        for _ in 0..<4 {
+            let stackView = UIStackView()
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.axis = .horizontal
+            stackView.distribution = .fillEqually
+            stackView.spacing = 12
+            stackViews.append(stackView)
+        }
+
+        return stackViews
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -84,26 +99,21 @@ class ViewController: UIViewController {
        let vert: CGFloat = 30
        let goriz: CGFloat = 170
 
-       var previousButton: UIButton?
-
        for (rowIndex, row) in buttons.enumerated() {
-           for (columnIndex, button) in row.enumerated() {
-               view.addSubview(button)
-
-               let rowPosition = CGFloat(rowIndex) * (buttonSize + buttonSpacing) + goriz
-               let columnPosition = CGFloat(columnIndex) * (buttonSize + buttonSpacing) + vert
-
-               button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: columnPosition).isActive = true
-               button.topAnchor.constraint(equalTo: view.topAnchor, constant: rowPosition).isActive = true
-               button.widthAnchor.constraint(equalToConstant: buttonSize).isActive = true
-               button.heightAnchor.constraint(equalToConstant: buttonSize).isActive = true
-
-               if let previousButton = previousButton {
-                   button.leadingAnchor.constraint(equalTo: previousButton.trailingAnchor, constant: buttonSpacing).isActive = true
-               }
-
-               previousButton = button
+           for (_, button) in row.enumerated() {
+               buttonStacks[rowIndex].addArrangedSubview(button)
            }
+       }
+
+       for (rowIndex, stackView) in buttonStacks.enumerated() {
+           view.addSubview(stackView)
+
+           let rowPosition = CGFloat(rowIndex) * (buttonSize + buttonSpacing) + goriz
+
+           stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: vert).isActive = true
+           stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: rowPosition).isActive = true
+           stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -vert).isActive = true
+           stackView.heightAnchor.constraint(equalToConstant: buttonSize).isActive = true
        }
    }
     
